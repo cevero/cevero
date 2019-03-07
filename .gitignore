@@ -1,4 +1,5 @@
 !.keep
 build/*
+*.ini
 work
 transcript
