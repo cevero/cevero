@@ -1,5 +1,7 @@
 !.keep
 build/*
 *.ini
+*.log
+*.vcd
 work
 transcript
