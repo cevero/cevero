@@ -1,3 +1,6 @@
 [submodule "ip/zero-riscy"]
 	path = ip/zero-riscy
 	url = https://github.com/cevero/zero-riscy.git
+[submodule "ip/soc_components"]
+	path = ip/soc_components
+	url = https://github.com/cevero/soc_components.git
