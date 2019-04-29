@@ -8,14 +8,14 @@ module tb_soc_single;
     logic [31:0] mem_result;
     logic [31:0] inst_addr;
 
-    zeroriscy_soc dut
+    soc dut
     (
-        .clk_i(clk_i),
-        .rst_ni(rst_ni),
-        .fetch_enable_i(fetch_en_i),
-        .mem_flag(mem_flag),
-        .mem_result(mem_result),
-        .instr_addr(inst_addr)
+        .clk_i          (clk_i     ),
+        .rst_ni         (rst_ni    ),
+        .fetch_enable_i (fetch_en_i),
+        .mem_flag       (mem_flag  ),
+        .mem_result     (mem_result),
+        .instr_addr     (inst_addr )
     );
 
     initial begin
