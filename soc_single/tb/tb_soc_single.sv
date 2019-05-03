@@ -8,6 +8,18 @@ module tb_soc_single;
     logic [31:0] mem_result;
     logic [31:0] inst_addr;
 
+    logic           debug_req_i;
+    logic [14:0]    debug_addr_i;
+    logic           debug_we_i;
+    logic [31:0]    debug_wdata_i;
+    logic           debug_halt_i;
+    logic           debug_resume_i;
+
+    logic           debug_gnt_o;
+    logic           debug_rvalid_o;
+    logic [31:0]    debug_rdata_o;
+    logic           debug_halted_o;
+
     soc dut
     (
         .clk_i          (clk_i     ),
@@ -15,7 +27,19 @@ module tb_soc_single;
         .fetch_enable_i (fetch_en_i),
         .mem_flag       (mem_flag  ),
         .mem_result     (mem_result),
-        .instr_addr     (inst_addr )
+        .instr_addr     (inst_addr ),
+
+        .debug_req_i    (debug_req_i),
+        .debug_addr_i   (debug_addr_i),
+        .debug_we_i     (debug_we_i),
+        .debug_wdata_i  (debug_wdata_i),
+        .debug_halt_i   (debug_halt_i),
+        .debug_resume_i (debug_resume_i),
+
+        .debug_gnt_o    (debug_gnt_o),
+        .debug_rvalid_o (debug_rvalid_o),
+        .debug_rdata_o  (debug_rdata_o),
+        .debug_halted_o (debug_halted_o)
     );
 
     initial begin
@@ -27,20 +51,102 @@ module tb_soc_single;
     initial clk_i = 1;
     always #5 clk_i = ~clk_i;
       
+    int i;
+    reg [31:0] gpr[32];
     initial begin
-        $display(" time  |   inst_addr  |   mem_flag    |    mem_result   |\n");
-        $monitor ("%5t  |   %h   |    %h   |    %d     |", $time, inst_addr, mem_flag, mem_result);
-         
+        $display(" time  | debug_addr_i |   mem_result   |\n");
+        $monitor("%5t  |    %h   | %3d |   %h   | %b | %b | %b | %b | %b | %b |", 
+                    $time, debug_addr_i, mem_result, debug_rdata_o,
+                    debug_halted_o, debug_gnt_o, debug_rvalid_o, debug_we_i, debug_req_i, debug_resume_i);
+        
+        // reset procedure
         rst_ni = 0;
+        @(posedge clk_i);
         fetch_en_i = 1;
-        #5;
         rst_ni = 1;
+
+        // enter debug mode
+        #300
+        @(negedge clk_i);
+        debug_halt_i = 1'b1;
+        @(posedge clk_i);
+        debug_halt_i = 1'b0;
+        @(debug_halted_o) // wait until its halted
+
+
+        // save all registers
+        for (i = 0; i<32; i++) begin
+            // read from GPR
+            debug_req_i = 1'b1;
+            debug_addr_i = 15'h400 + i*4; // x7 addr + 0x400 offset
+            gpr[i] = debug_rdata_o;
+            @(debug_rvalid_o)
+            debug_req_i = 1'b0;
+            @(negedge debug_rvalid_o);
+        end
+
+        for (i = 0; i<32; i++) begin
+            $display("x%1d: %h",i,gpr[i]);
+        end
+
+
+        // write garbage to GPR
+        for (i = 0; i<32; i++) begin
+            debug_req_i = 1'b1;
+            debug_addr_i = 15'h400 + i*4;
+            debug_wdata_i = $urandom;
+            debug_we_i = 1'b1;
+            @(posedge clk_i);
+            debug_we_i = 1'b0;
+            debug_req_i = 1'b0;
+            @(negedge debug_rvalid_o);
+        end
+
+        // read all registers
+        for (i = 0; i<32; i++) begin
+            // read from GPR
+            debug_req_i = 1'b1;
+            debug_addr_i = 15'h400 + i*4; // x7 addr + 0x400 offset
+            @(debug_rvalid_o)
+            debug_req_i = 1'b0;
+            @(negedge debug_rvalid_o);
+        end
+
+        // restore all registers
+        for (i = 0; i<32; i++) begin
+            debug_req_i = 1'b1;
+            debug_addr_i = 15'h400 + i*4;
+            debug_wdata_i = gpr[i];
+            debug_we_i = 1'b1;
+            @(posedge clk_i);
+            debug_we_i = 1'b0;
+            debug_req_i = 1'b0;
+            @(negedge debug_rvalid_o);
+        end
+
+        // read all registers
+        for (i = 0; i<32; i++) begin
+            // read from GPR
+            debug_req_i = 1'b1;
+            debug_addr_i = 15'h400 + i*4; // x7 addr + 0x400 offset
+            if(gpr[i] != debug_rdata_o)
+                $display("%5t - Data mismatch reg x%1d. Expect:%h - Got:%h",$time,i,gpr[i],debug_rdata_o);
+            @(debug_rvalid_o)
+            debug_req_i = 1'b0;
+            @(negedge debug_rvalid_o);
+        end
+
+        // exit debug mode
+        @(posedge clk_i);
+        debug_resume_i = 1'b1;
+        @(negedge debug_halted_o); // wait until not halted
+        debug_resume_i = 1'b0;
         
         #1000 $finish; // timeout if mem_flag never rises
     end
     
-    always @*
-      if (mem_flag)
-          #5 $finish;
+    //always @*
+      //if (mem_flag)
+          //#5 $finish;
 
 endmodule

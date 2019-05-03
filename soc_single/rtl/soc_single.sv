@@ -11,7 +11,19 @@ module soc
 	input logic         fetch_enable_i,
 	output logic [31:0] mem_flag,
 	output logic [31:0] mem_result,
-	output logic [31:0] instr_addr
+	output logic [31:0] instr_addr,
+
+    input logic           debug_req_i,
+    input logic [14:0]    debug_addr_i,
+    input logic           debug_we_i,
+    input logic [31:0]    debug_wdata_i,
+    input logic           debug_halt_i,
+    input logic           debug_resume_i,
+
+    output logic           debug_gnt_o,
+    output logic           debug_rvalid_o,
+    output logic [31:0]    debug_rdata_o,
+    output logic           debug_halted_o
 );
 
 	// Core
@@ -50,16 +62,16 @@ module soc
 	logic [4:0]     irq_id_o;
 	
 	// Debug Interface
-	logic           debug_req_i;
-	logic           debug_gnt_o;
-	logic           debug_rvalid_o;
-	logic [14:0]    debug_addr_i;
-	logic           debug_we_i;
-	logic [31:0]    debug_wdata_i;
-	logic [31:0]    debug_rdata_o;
-	logic           debug_halted_o;
-	logic           debug_halt_i;
-	logic           debug_resume_i;
+	//logic           debug_req_i;
+	//logic           debug_gnt_o;
+	//logic           debug_rvalid_o;
+	//logic [14:0]    debug_addr_i;
+	//logic           debug_we_i;
+	//logic [31:0]    debug_wdata_i;
+	//logic [31:0]    debug_rdata_o;
+	//logic           debug_halted_o;
+	//logic           debug_halt_i;
+	//logic           debug_resume_i;
 
 	sp_ram inst_mem
 	(
