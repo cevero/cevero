@@ -13,9 +13,9 @@ module tb_soc_single;
         .clk_i          (clk_i     ),
         .rst_ni         (rst_ni    ),
         .fetch_enable_i (fetch_en_i),
-        .mem_flag       (mem_flag  ),
-        .mem_result     (mem_result),
-        .instr_addr     (inst_addr )
+        .mem_flag_o     (mem_flag  ),
+        .mem_result_o   (mem_result),
+        .instr_addr_o   (inst_addr )
     );
 
     initial begin
