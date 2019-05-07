@@ -64,25 +64,32 @@ module tb_soc_single;
         @(posedge clk_i);
         fetch_en_i = 1;
         rst_ni = 1;
+        debug_we_i = 0;
+        debug_halt_i = 0;
+        debug_resume_i = 0;
+        debug_req_i = 0;
+        debug_wdata_i = 0;
+        debug_addr_i = 0;
 
         // enter debug mode
         #300
-        @(negedge clk_i);
-        debug_halt_i = 1'b1;
         @(posedge clk_i);
+        debug_halt_i = 1'b1;
+        @(posedge debug_halted_o) // wait until its halted
         debug_halt_i = 1'b0;
-        @(debug_halted_o) // wait until its halted
 
+        @(posedge clk_i)
 
         // save all registers
         for (i = 0; i<32; i++) begin
             // read from GPR
             debug_req_i = 1'b1;
-            debug_addr_i = 15'h400 + i*4; // x7 addr + 0x400 offset
-            gpr[i] = debug_rdata_o;
-            @(debug_rvalid_o)
-            debug_req_i = 1'b0;
-            @(negedge debug_rvalid_o);
+            debug_addr_i = 15'h400 + i*4; // reg addr + 0x400 offset
+            gpr[i-1] = debug_rdata_o;
+            @(posedge debug_rvalid_o)
+            $display("%4t - %h - %h - %b", $time, debug_addr_i, debug_rdata_o, debug_rvalid_o);
+            debug_req_i <= 1'b0;
+            @(posedge clk_i);
         end
 
         for (i = 0; i<32; i++) begin
