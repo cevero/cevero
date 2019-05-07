@@ -31,6 +31,9 @@ compile:
 run:
 	$(SIM) -batch -do script/run.do work.tb_$(TOP_LEVEL)
 
+wave:
+	$(SIM) -do script/wave_run.do work.tb_$(TOP_LEVEL)
+
 # Removes all generated files
 clean:
 	rm -rf modelsim.ini transcript $(WORK) build/*
