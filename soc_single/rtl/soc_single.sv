@@ -86,16 +86,16 @@ module soc
 		.NUM_WORDS  (256)
     ) inst_mem (
 		.clk      (clk_i         ),
-		.rst_n    (1'b1          ),
+		.rst_n    (rst_ni        ),
 		
-		.req_i    (instr_req_o   ),
-		.gnt_o    (instr_gnt_i   ),
-		.rvalid_o (instr_rvalid_i),
-		.addr_i   (instr_addr_o  ),
+		.req_i    (instr_req     ),
+		.gnt_o    (instr_gnt     ),
+		.rvalid_o (instr_rvalid  ),
+		.addr_i   (instr_addr    ),
 		.we_i     (1'b0          ),
         .be_i     (4'b1111       ),
-		.rdata_o  (instr_rdata_i ),
-		.wdata_i  (32'b0)
+		.rdata_o  (instr_rdata   ),
+		.wdata_i  (32'b0         )
 	);
 	
 	sp_ram
@@ -105,16 +105,16 @@ module soc
 		.NUM_WORDS  (256)
     ) data_mem (
 		.clk      (clk_i        ),
-		.rst_n    (1'b1         ),
+		.rst_n    (rst_ni       ),
 		
-		.req_i    (data_req_o   ),
-		.gnt_o    (data_gnt_i   ),
-		.rvalid_o (data_rvalid_i),
-		.addr_i   (data_addr_o  ),
-		.we_i     (data_we_o    ),
-        .be_i     (data_be_o    ),
-		.rdata_o  (data_rdata_i ),
-		.wdata_i  (data_wdata_o )
+		.req_i    (data_req     ),
+		.gnt_o    (data_gnt     ),
+		.rvalid_o (data_rvalid  ),
+		.addr_i   (data_addr    ),
+		.we_i     (data_we      ),
+        .be_i     (data_be      ),
+		.rdata_o  (data_rdata   ),
+		.wdata_i  (data_wdata   )
 	);
 	  
 	zeroriscy_core 

@@ -29,13 +29,8 @@ module tb_soc_single;
     integer i;
     initial begin
         $display(" time  |   inst_addr  |   mem_flag    |    mem_result   |\n");
-        $monitor ("%5t  |   %h   | %1d | %1d | %b | %b | %d | %h |", 
-                                $time, inst_addr, mem_flag, mem_result,
-                                  dut.data_be_o,
-                                  dut.data_we_o,
-                                  dut.data_wdata_o,
-                                  dut.data_addr_o
-                            );
+        $monitor ("%5t  |   %h   | %1d | %2d |", 
+                                $time, inst_addr, mem_flag, mem_result);
          
         rst_ni = 0;
         fetch_en_i = 1;
