@@ -3,5 +3,6 @@ build/*
 *.ini
 *.log
 *.vcd
+*.wlf
 work
 transcript
