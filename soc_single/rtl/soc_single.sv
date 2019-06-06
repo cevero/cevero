@@ -9,8 +9,6 @@ module soc
 	input logic         clk_i,
 	input logic         rst_ni,
 	input logic         fetch_enable_i,
-	output logic [31:0] mem_flag,
-	output logic [31:0] mem_result,
 	output logic [31:0] instr_addr
 );
 
@@ -61,38 +59,42 @@ module soc
 	logic           debug_halt_i;
 	logic           debug_resume_i;
 
-	sp_ram inst_mem
-	(
-		.clk           (clk_i         ),
-		.rst_n         (1'b1          ),
+	sp_ram
+	#(
+		.ADDR_WIDTH  (32), 
+		.DATA_WIDTH (32), 
+		.NUM_WORDS  (256)
+    ) inst_mem (
+		.clk      (clk_i         ),
+		.rst_n    (1'b1          ),
 		
-		.port_req_i    (instr_req_o   ),
-		.port_gnt_o    (instr_gnt_i   ),
-		.port_rvalid_o (instr_rvalid_i),
-		.port_addr_i   (instr_addr_o  ),
-		.port_we_i     (1'b0          ),
-		.port_rdata_o  (instr_rdata_i ),
-		.port_wdata_i  (32'b0),
-		
-		.mem_flag      (              ),
-		.mem_result    (              )
+		.req_i    (instr_req_o   ),
+		.gnt_o    (instr_gnt_i   ),
+		.rvalid_o (instr_rvalid_i),
+		.addr_i   (instr_addr_o  ),
+		.we_i     (1'b0          ),
+        .be_i     (4'b1111       ),
+		.rdata_o  (instr_rdata_i ),
+		.wdata_i  (32'b0)
 	);
 	
-	sp_ram data_mem
-	(
-		.clk           (clk_i        ),
-		.rst_n         (1'b1         ),
+	sp_ram
+	#(
+		.ADDR_WIDTH  (32), 
+		.DATA_WIDTH (32), 
+		.NUM_WORDS  (256)
+    ) data_mem (
+		.clk      (clk_i        ),
+		.rst_n    (1'b1         ),
 		
-		.port_req_i    (data_req_o   ),
-		.port_gnt_o    (data_gnt_i   ),
-		.port_rvalid_o (data_rvalid_i),
-		.port_addr_i   (data_addr_o  ),
-		.port_we_i     (data_we_o    ),
-		.port_rdata_o  (data_rdata_i ),
-		.port_wdata_i  (data_wdata_o ),
-		
-		.mem_flag      (mem_flag     ),
-		.mem_result    (mem_result   )
+		.req_i    (data_req_o   ),
+		.gnt_o    (data_gnt_i   ),
+		.rvalid_o (data_rvalid_i),
+		.addr_i   (data_addr_o  ),
+		.we_i     (data_we_o    ),
+        .be_i     (data_be_o    ),
+		.rdata_o  (data_rdata_i ),
+		.wdata_i  (data_wdata_o )
 	);
 	  
 	zeroriscy_core 
