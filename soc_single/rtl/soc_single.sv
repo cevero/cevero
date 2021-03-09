@@ -1,27 +1,8 @@
 `include "../ip/soc_components/sp_ram/rtl/sp_ram.sv"
 
-module soc
-#(
-	parameter bit                 PMPEnable        = 1'b0,
-    parameter int unsigned        PMPGranularity   = 0,
-    parameter int unsigned        PMPNumRegions    = 4,
-    parameter int unsigned        MHPMCounterNum   = 0,
-    parameter int unsigned        MHPMCounterWidth = 40,
-    parameter bit                 RV32E            = 1'b0,
-    parameter ibex_pkg::rv32m_e   RV32M            = ibex_pkg::RV32MFast,
-    parameter ibex_pkg::rv32b_e   RV32B            = ibex_pkg::RV32BNone,
-    parameter ibex_pkg::regfile_e RegFile          = ibex_pkg::RegFileFF,
-    parameter bit                 BranchTargetALU  = 1'b0,
-    parameter bit                 WritebackStage   = 1'b0,
-    parameter bit                 ICache           = 1'b0,
-    parameter bit                 ICacheECC        = 1'b0,
-    parameter bit                 BranchPredictor  = 1'b0,
-    parameter bit                 DbgTriggerEn     = 1'b0,
-    parameter int unsigned        DbgHwBreakNum    = 1,
-    parameter bit                 SecureIbex       = 1'b0,
-    parameter int unsigned        DmHaltAddr       = 32'h1A110800,
-    parameter int unsigned        DmExceptionAddr  = 32'h1A110808
-)(
+import ibex_pkg::*;
+
+module soc(
 	input logic         clk_i,
 	input logic         rst_ni,
 	input logic         fetch_enable_i,
@@ -38,6 +19,7 @@ module soc
     //                                                        //
     ////////////////////////////////////////////////////////////
 
+	
 	
 	logic           clock_en  = 1;    // enable clock, otherwise it is gated
 	logic           test_en = 0;     // enable all clock gates for testing
@@ -120,78 +102,8 @@ module soc
 		.wdata_i  (data_wdata   )
 	);
 	  
-	/*
-	zeroriscy_core 
-	#(
-		.N_EXT_PERF_COUNTERS ( N_EXT_PERF_COUNTERS ), 
-		.RV32E               ( RV32E               ), 
-		.RV32M               ( RV32M               )
-	)core(
-		.clk_i               ( clk_i               ),
-		.rst_ni              ( rst_ni              ),
-		
-		.clock_en_i          ( clock_en            ),
-		.test_en_i           ( test_en             ),
-		
-		.core_id_i           ( core_id             ),
-		.cluster_id_i        ( cluster_id          ),
-		.boot_addr_i         ( boot_addr           ),
-		
-		.instr_req_o         ( instr_req           ),
-		.instr_gnt_i         ( instr_gnt           ),
-		.instr_rvalid_i      ( instr_rvalid        ),
-		.instr_addr_o        ( instr_addr          ),
-		.instr_rdata_i       ( instr_rdata         ),
-		
-		.data_req_o          ( data_req            ),
-		.data_gnt_i          ( data_gnt            ),
-		.data_rvalid_i       ( data_rvalid         ),
-		.data_we_o           ( data_we             ),
-		.data_be_o           ( data_be             ),
-		.data_addr_o         ( data_addr           ),
-		.data_wdata_o        ( data_wdata          ),
-		.data_rdata_i        ( data_rdata          ),
-		.data_err_i          ( data_err            ),
-		
-		.irq_i               ( irq                 ),
-		.irq_id_i            ( irq_id_in           ),
-		.irq_ack_o           ( irq_ack             ),
-		.irq_id_o            ( irq_id_out          ),
-		
-		.debug_req_i         ( debug_req           ),
-		.debug_gnt_o         ( debug_gnt           ),
-		.debug_rvalid_o      ( debug_rvalid        ),
-		.debug_addr_i        ( debug_addr          ),
-		.debug_we_i          ( debug_we            ),
-		.debug_wdata_i       ( debug_wdata         ),
-		.debug_rdata_o       ( debug_rdata         ),
-		.debug_halted_o      ( debug_halted        ),
-		.debug_halt_i        ( debug_halt          ),
-		.debug_resume_i      ( debug_resume        ),
-		
-		.fetch_enable_i      ( fetch_enable_i      ),
-	
-		.ext_perf_counters_i (                     )
-	);
-	*/
-ibex_core #(
-    .PMPEnable        ( 0                   ),
-    .PMPGranularity   ( 0                   ),
-    .PMPNumRegions    ( 4                   ),
-    .MHPMCounterNum   ( 0                   ),
-    .MHPMCounterWidth ( 40                  ),
-    .RV32E            ( 0                   ),
-    .RV32M            ( ibex_pkg::RV32MFast ),
-    .RV32B            ( ibex_pkg::RV32BNone ),
-    .RegFile          ( ibex_pkg::RegFileFF ),
-    .ICache           ( 0                   ),
-    .ICacheECC        ( 0                   ),
-    .BranchPrediction ( 0                   ),
-    .SecureIbex       ( 0                   ),
-    .DbgTriggerEn     ( 0                   ),
-    .DmHaltAddr       ( 32'h1A110800        ),
-    .DmExceptionAddr  ( 32'h1A110808        )
-) u_core (
+ibex_core u_core 
+(
     // Clock and reset
     .clk_i          (clk_i),
     .rst_ni         (rst_ni),
@@ -229,7 +141,6 @@ ibex_core #(
 
     // Debug interface
     .debug_req_i    (debug_req),
-    .crash_dump_o   (),
 
     // Special control signals
     .fetch_enable_i (fetch_enable_i),

@@ -9,7 +9,11 @@
 CC = vlog
 SIM = vsim
 TOP_LEVEL = $(shell basename `pwd` | tr '-' '_')
+IBEXDIR=../ip/zero-riscy/rtl
 WORK = work
+SVFILES=`ls ../ip/zero-riscy/rtl/*.sv | awk '!/ibex_pkg.sv/ {print $0}'`
+#FILES=$(cat ../ip/zero-riscy/rtl/ibex_core.f | tr '\n' ' ')
+#SVFILES=$(addprefix $(IBEXDIR),$(FILES))
 
 default: all
 
@@ -22,9 +26,12 @@ compile:
         vmap $(WORK) $(WORK); \
     fi
 # Compiles all verilog files in the "default" folders
-	$(CC) -sv -mfcu ../ip/zero-riscy/include/*.sv ../ip/zero-riscy/*.sv \
+	$(CC) -sv -mfcu ../ip/zero-riscy/rtl/ibex_pkg.sv $(SVFILES)\
 		../ip/soc_components/soc_utils/*.sv rtl/*.sv tb/*.sv \
-        +incdir+../ip/zero-riscy/include
+		+incdir+../ip/zero-riscy/vendor/lowrisc_ip/ip/prim/rtl \
+		+incdir+../ip/zero-riscy/dv/fcov \
+		+incdir+dv/uvm/core_ibex/common/prim
+#+incdir+../ip/zero-riscy/vendor/lowrisc_ip/ip/prim/rtl
 
 # Executes the simulation in batch mode using the commands on the script/run.do
 # file.
