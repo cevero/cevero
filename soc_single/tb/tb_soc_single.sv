@@ -29,7 +29,7 @@ module tb_soc_single;
     integer i;
     initial begin
 		//dut.u_core.instr_valid_id = 1;
-		dut.u_core.instr_fetch_err = 0;
+		dut.u_core.instr_fetch_err <= 0;
 		//dut.u_core.illegal_csr_insn_id <= 0;
         $display(" time  |   inst_addr  |   mem_flag    |    mem_result   |\n");
         $monitor ("%5t  |   %h   | %1d | %2d | %d | %d | %d",  $time, inst_addr, mem_flag, mem_result,dut.u_core.instr_valid_id,dut.u_core.illegal_csr_insn_id,dut.u_core.instr_fetch_err);
