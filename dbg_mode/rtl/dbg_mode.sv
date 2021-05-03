@@ -1,4 +1,5 @@
 `include "../ip/soc_components/sp_ram/rtl/sp_ram.sv"
+`include "../instr_mem_decoder/rtl/instr_mem_decoder.sv"
 
 import ibex_pkg::*;
 
@@ -70,6 +71,24 @@ module soc(
     //  |_|_| |_|___/\__\__,_|_| |_|\__|_|\__,_|\__|_|\___/|_| |_|___/  //
     //                                                                  //
     //////////////////////////////////////////////////////////////////////
+	sp_ram
+	#(
+		.ADDR_WIDTH  (32), 
+		.DATA_WIDTH (32), 
+		.NUM_WORDS  (256)
+    ) data_mem (
+		.clk      (clk_i        ),
+		.rst_n    (rst_ni       ),
+		
+		.req_i    (data_req   ),
+		.gnt_o    (data_gnt  ),
+		.rvalid_o (data_rvalid),
+		.addr_i   (data_addr  ),
+		.we_i     (data_we    ),
+        .be_i     (data_be    ),
+		.rdata_o  (data_rdata ),
+		.wdata_i  (data_wdata )
+	);
 
 	sp_ram
 	#(
@@ -91,7 +110,7 @@ module soc(
 	);
 	
 	//memory decoder
-	inst_mem_decoder #(
+	instr_mem_decoder #(
 		.ROM_BASE (32'h00040080)
 	)inst_mem_dec(
 		 .clk_i(clk_i),

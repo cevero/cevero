@@ -1,5 +1,5 @@
-module tb_dbg_mode_1;
-    logic        clk;
+module tb_instr_mem_decoder;
+    logic        	clk;
 
 	logic           instr_req;
 	logic           instr_gnt;
@@ -15,7 +15,7 @@ module tb_dbg_mode_1;
 	logic [31:0]    core_instr_rdata;
 	logic [31:0]    core_instr_err;
 
-	inst_mem_decoder #(
+	instr_mem_decoder #(
 		.ROM_BASE (32'h00040080)
 	)inst_mem_dec(
 		 .clk_i(clk),
@@ -35,25 +35,29 @@ module tb_dbg_mode_1;
 		 .instr_rdata_i	(instr_rdata),
 		 .instr_err_i	(instr_err)
 	 );
-/*
-    initial begin
-        $readmemb("../ip/soc_components/soc_utils/fibonacci_byte.bin", dut.inst_mem.mem);
-    end
-	*/
 
 	//Clock generator
     initial clk = 0;
-    always #5 clk = ~clk;
+    always #5 begin
+		clk = ~clk;
+		if(clk == 1)
+			$display("----  -----  -----");
+	end
       
     initial begin
 		core_instr_req = 0;
 		core_instr_addr = 32'h00040080;
-        $display(" time  |   inst_addr  |   inst_rdata  |  req      \n");
-        $monitor(" %5t   |   %h      |   %h   |   %h    ",  $time, core_instr_addr,core_instr_rdata,core_instr_req);
-#1
+        $display(" time | inst_addr  |   inst_rdata  |  req    \n");
+        $monitor(" %5t   |   %h    |   %h   |   %h  | %d",  $time, core_instr_addr,core_instr_rdata,core_instr_req,clk);
+		#5
 		core_instr_req = 1;
 
-        #1000 $finish; 
+		for(int i=0;i<32;i++) begin
+			#10
+			core_instr_addr <= core_instr_addr + 4;
+		end
+
+        #500 $finish; 
     end
 
 endmodule

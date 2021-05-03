@@ -1,5 +1,7 @@
+`include "../recovery_code_rom/rtl/recovery_code_rom.sv"
+
 module instr_mem_decoder #(
-	parameter ROM_BASE = 32'h00040080,
+	parameter ROM_BASE = 32'h00040080
 )(
 	input logic			 clk_i,
 	input logic		 	 rst_ni,
@@ -22,9 +24,8 @@ module instr_mem_decoder #(
 localparam ROM_SIZE = 32'd32;	
 logic [31:0] rom_data;
 
-recovery_code_rom #(
-	.ROM_BASE ( 32'h00040080)
-)(
+recovery_code_rom rom
+(
   .clk_i	(clk_i),
   .req_i	(core_instr_req_i),
   .addr_i	(core_instr_addr_i - ROM_BASE),
@@ -32,7 +33,7 @@ recovery_code_rom #(
 );
 
 always_comb begin
-	if (core_instr_addr_i >= ROM_BASE && core_instr_addr_i < ROM_BASE + ROM_SIZE) begin
+	if (core_instr_addr_i >= ROM_BASE && core_instr_addr_i < ROM_BASE + 4*ROM_SIZE) begin
 		core_instr_gnt_o 	<= core_instr_req_i;
 		core_instr_rvalid_o <= core_instr_req_i ;
 		core_instr_rdata_o <= rom_data;
@@ -48,8 +49,5 @@ always_comb begin
 		instr_req_o <= core_instr_req_i;
 		instr_addr_o <= core_instr_addr_i;
 	end
-
 end
-
-
 endmodule

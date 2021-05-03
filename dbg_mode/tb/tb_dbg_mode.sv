@@ -13,8 +13,6 @@ module tb_dbg_mode;
 		.instr_addr_o (instr_addr)
     );
 
-	localparam logic [31:0] EBREAK_INST = {12'b1,13'b0,7'b1110011};
-
     initial begin
         $readmemb("../ip/soc_components/soc_utils/fibonacci_byte.bin", dut.inst_mem.mem);
     end
@@ -29,10 +27,14 @@ module tb_dbg_mode;
         $display(" time  |   inst_addr  |   inst     |   err      |\n");
         $monitor(" %5t   |   %h      |   %h   |  %d       | %d          |     %d      |",  $time, instr_addr,dut.core_instr_rdata,dut.u_core.instr_fetch_err,clk,debug_req);
         rst_n = 0;
+
         #5;
         rst_n = 1;
         fetch_en = 1;
+
+		#100
 		debug_req = 1;
+
 		#100
 		debug_req = 0;
 
