@@ -23,12 +23,15 @@ compile:
         vmap $(WORK) $(WORK); \
     fi
 # Compiles all verilog files in the "default" folders
-	$(CC) -sv -mfcu rtl/*.sv tb/*.sv \
+	$(CC) -sv -mfcu rtl/*.sv tb/*.sv 
 
 # Executes the simulation in batch mode using the commands on the script/run.do
 # file.
 run:
 	$(SIM) -batch -do script/run.do work.tb_$(TOP_LEVEL)
+
+wave:
+	$(SIM) -voptargs="+acc" -do script/wave_run.do work.tb_$(TOP_LEVEL)
 
 # Removes all generated files
 clean:

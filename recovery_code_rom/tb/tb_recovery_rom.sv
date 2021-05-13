@@ -11,19 +11,21 @@ module tb_recovery_code_rom;
  );
 
   initial clk=0;
-  always #1 clk = ~clk;
+  always #1 clk <= ~clk;
 
   initial begin
   	addr=0;
    	req =0;
-    $display("#		time|  req   |  addr   |   rdata   | clk ");
-    $monitor("#%d|  %d   |  %h   |   %h   |%d",$time,req,addr,rdata,clk);
-    #3
+    $display("time |  req   |  addr   |   rdata   | clk ");
+    $monitor("%5t  |  %d   |  %h   |   %h   |%d",$time,req,addr,rdata,clk);
+    #9
     req = 1;
     #2;
     addr = 4;
     #2
     addr = 8;
+    #2
+    addr = 16;
     #2
     req  = 0;
 

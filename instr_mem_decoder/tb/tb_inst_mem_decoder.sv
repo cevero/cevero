@@ -39,22 +39,22 @@ module tb_instr_mem_decoder;
 	//Clock generator
     initial clk = 0;
     always #5 begin
-		clk = ~clk;
-		if(clk == 1)
-			$display("----  -----  -----");
+		clk <= ~clk;
+		//if(clk == 1)
+		//	$display("----  -----  -----");
 	end
       
     initial begin
-		core_instr_req = 0;
-		core_instr_addr = 32'h00040080;
+		core_instr_req <= 0;
+		core_instr_addr <= 32'h00040080;
         $display(" time | inst_addr  |   inst_rdata  |  req    \n");
         $monitor(" %5t   |   %h    |   %h   |   %h  | %d",  $time, core_instr_addr,core_instr_rdata,core_instr_req,clk);
-		#5
-		core_instr_req = 1;
 
+		#5;
+		core_instr_req <= 1;
 		for(int i=0;i<32;i++) begin
 			#10
-			core_instr_addr <= core_instr_addr + 4;
+			core_instr_addr = core_instr_addr + 4;
 		end
 
         #500 $finish; 

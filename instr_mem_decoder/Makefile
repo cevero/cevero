@@ -28,7 +28,11 @@ compile:
 # Executes the simulation in batch mode using the commands on the script/run.do
 # file.
 run:
+#$(SIM) -voptargs="+acc" -batch -do script/run.do work.tb_$(TOP_LEVEL)
 	$(SIM) -batch -do script/run.do work.tb_$(TOP_LEVEL)
+
+wave:
+	$(SIM) -voptargs="+acc" -do script/wave_run.do work.tb_$(TOP_LEVEL)
 
 # Removes all generated files
 clean:
