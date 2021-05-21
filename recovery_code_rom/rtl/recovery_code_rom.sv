@@ -11,13 +11,12 @@ module recovery_code_rom #(
 );
 
   word [0:ROM_SIZE-1] mem_data; 
-
   assign mem_data = {
-	32'h00000533,
-	32'h00150513,
-	32'hffdff06f,
+	32'h02a10113,
+	32'h01610113,
+	32'h00b10113,
 	32'h7b200073, //dret
-	32'h00000013, //nop
+	32'h00000023, //nop
 	32'h00000013,
 	32'h00000013,
 	32'h00000013,
@@ -55,6 +54,6 @@ module recovery_code_rom #(
 		end
 	end
 
-  assign rdata_o = ( addr_q >= ROM_SIZE )? '0 : mem_data[addr_q];
+  assign rdata_o = ( addr_q >= ROM_SIZE )? 32'h0 : mem_data[addr_q];
 
 endmodule
