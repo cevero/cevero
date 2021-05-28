@@ -38,6 +38,9 @@ module soc(
 	logic [31:0]    instr_addr;
 	logic [31:0]    instr_rdata;
 	logic [31:0]    instr_err;
+	logic 		    instr_rst;
+	logic 		    instr_dec_rst;
+
     
 	logic           core_instr_req;
 	logic           core_instr_gnt;
@@ -90,6 +93,7 @@ module soc(
 		.wdata_i  (data_wdata )
 	);
 
+	assign instr_rst = instr_dec_rst;
 	sp_ram
 	#(
 		.ADDR_WIDTH  (32), 
@@ -97,7 +101,7 @@ module soc(
 		.NUM_WORDS  (256)
     ) inst_mem (
 		.clk      (clk_i         ),
-		.rst_n    (rst_ni        ),
+		.rst_n    ( instr_rst ),
 		
 		.req_i    (instr_req     ),
 		.gnt_o    (instr_gnt     ),
@@ -114,7 +118,7 @@ module soc(
 		.ROM_BASE (32'h00040080)
 	)inst_mem_dec(
 		 .clk_i(clk_i),
-		 .rst_ni(),
+		 .rst_ni(rst_ni),
 
 		 .core_instr_req_i		(core_instr_req),
 		 .core_instr_gnt_o		(core_instr_gnt),
@@ -128,7 +132,8 @@ module soc(
 		 .instr_rvalid_i(instr_rvalid),
 		 .instr_addr_o	(instr_addr),
 		 .instr_rdata_i	(instr_rdata),
-		 .instr_err_i	(instr_err)
+		 .instr_err_i	(instr_err),
+		 .instr_rst_o   (instr_dec_rst)
 	 );
 
 	ibex_core

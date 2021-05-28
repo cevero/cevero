@@ -24,8 +24,13 @@ module tb_dbg_mode;
 	//
 
     initial begin
-        $readmemb("../ip/soc_components/soc_utils/fibonacci_byte.bin", dut.inst_mem.mem);
+        //$readmemb("../ip/soc_components/soc_utils/fibonacci_byte.bin", dut.inst_mem.mem);
+        $readmemb("./rtl/fibonacci_byte.bin", dut.inst_mem.mem);
     end
+
+	initial begin: fill_rom
+		$readmemh("./rtl/rom.bin", dut.inst_mem_dec.rom.mem);
+	end
 
 	//Clock generator
     initial clk <= 0;
@@ -38,11 +43,11 @@ module tb_dbg_mode;
         $monitor(" %5t   |   %h      |   %h   |  %d       | %d          |     %d      | %d |  %d ",  $time, dut.core_instr_addr, dut.core_instr_rdata, dut.u_core.instr_fetch_err, clk,debug_req,mem_flag,mem_result);
         rst_n = 0;
 
-        #5;
+        #15;
         rst_n = 1;
         fetch_en = 1;
 
-		#190
+		#200
 		debug_req = 1;
 
 		#10

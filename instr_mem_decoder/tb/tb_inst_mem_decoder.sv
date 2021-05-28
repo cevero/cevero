@@ -15,6 +15,10 @@ module tb_instr_mem_decoder;
 	logic [31:0]    core_instr_rdata;
 	logic [31:0]    core_instr_err;
 
+initial begin: fill_rom
+        $readmemh("./rtl/rom.bin", inst_mem_dec.rom.mem);
+end
+
 	instr_mem_decoder #(
 		.ROM_BASE (32'h00040080)
 	)inst_mem_dec(
